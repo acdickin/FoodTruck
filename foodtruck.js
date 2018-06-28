@@ -1,18 +1,18 @@
-
 var request = require('request');
-var _= require('underscore');
-var bodyParser = require('body-parser');
-var express=require('express');
-var app =  express();
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:false}));
+var columnify = require('columnify');
+var	query = require('cli-interact').getYesNo;
 
 //get day and time
 var day = getDayOfTheWeek();
 var time = getCurrentHour();
 var url = "http://data.sfgov.org/resource/bbb8-hzi6.json?dayofweekstr="+day
 
+
+// for testing
+// var sorted =require("./foodtruckData");
+// printList(sorted);
+
+//Request data and then print results
 request(url ,function (error, response, body) {
   var unsorted = JSON.parse(body);
 
@@ -22,16 +22,36 @@ request(url ,function (error, response, body) {
     return parseInt(start)>time;
   })
 
-  var sorted= filtered.sort(compare);
-
-  process.stdout.write("If you would like to load more hit enter");
-  process.stdout.write("If you wish to escape press controll+c");
-  process.stdin.once("data", function (data) {
-       callback(data.toString().trim());
-   });
-
+var sorted= filtered.sort(compare);
+printList(sorted);
 })
 
+//prints the lists
+function printList(sorted){
+  var arr=[];
+  var name, location;
+  var max=sorted.length-1;
+  for (var i=0; i<=max; i++){
+    name=sorted[i].applicant;
+    location=sorted[i].location;
+    arr.push ({name,location});
+
+    if((!(i % 10) && i>1)){
+      console.log("")
+      console.log(columnify(arr));
+      console.log("");
+
+      var answer = query('Do you Wish to see more ');
+      if (!answer) {
+        break;
+      }
+      arr=[];
+    }
+    else if(i==max){
+        console.log(columnify(arr));
+    }
+  }
+}
 
 //sorts data alphabetically
 function compare(a,b){
@@ -53,10 +73,8 @@ function getDayOfTheWeek(){
   var d = date.getDay();
   return week[d];
 }
+
 function getCurrentHour(){
   var date =new Date();
   return date.getHours();
 }
-
-// to run locally, first install node and npm. then:
-// $ npm install request && node foodtruck.js
