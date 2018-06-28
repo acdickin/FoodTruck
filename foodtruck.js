@@ -22,8 +22,8 @@ request(url ,function (error, response, body) {
     return parseInt(start)>time;
   })
 
-var sorted= filtered.sort(compare);
-printList(sorted);
+  var sorted= filtered.sort(compare);
+  printList(sorted);
 })
 
 //prints the lists
@@ -31,6 +31,7 @@ function printList(sorted){
   var arr=[];
   var name, location;
   var max=sorted.length-1;
+
   for (var i=0; i<=max; i++){
     name=sorted[i].applicant;
     location=sorted[i].location;
@@ -42,13 +43,13 @@ function printList(sorted){
       console.log("");
 
       var answer = query('Do you Wish to see more ');
-      if (!answer) {
-        break;
-      }
+
+      if (!answer) {break;}
+
       arr=[];
     }
     else if(i==max){
-        console.log(columnify(arr));
+      console.log(columnify(arr));
     }
   }
 }
@@ -57,12 +58,12 @@ function printList(sorted){
 function compare(a,b){
   var nameA = a.applicant.toUpperCase(); // ignore upper and lowercase
   var nameB = b.applicant.toUpperCase(); // ignore upper and lowercase
-    if (nameA < nameB) {
-      return -1;
-    }
-    if (nameA > nameB) {
-      return 1;
-    }
+  if (nameA < nameB) {
+    return -1;
+  }
+  if (nameA > nameB) {
+    return 1;
+  }
   // applicant must be equal
   return 0
 }
